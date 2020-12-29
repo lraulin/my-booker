@@ -21,6 +21,27 @@ const confirmed = ({ confirmUserId, confirmedAt }) =>
 const approved = ({ approvedUserId, approvedAt }) =>
   approvedUserId ? `User #${approvedUserId} on ${approvedAt}` : "";
 
+const payRates = ({ timecardPayRate }) => {
+  if (!timecardPayRate) return "";
+  const {
+    description,
+    payRate,
+    overtimePayRate,
+    doubletimePayRate,
+  } = timecardPayRate;
+  return `${description}\n${payRate} / ${doubletimePayRate} / ${overtimePayRate}`;
+};
+
+const stipends = ({
+  stipendPaymentAmount,
+  stipendRuleAmount,
+  stipendRuleDays,
+}) => {
+  if (!stipendRuleAmount) return "";
+  return `$${stipendPaymentAmount}
+  $${stipendRuleAmount} / ${stipendRuleDays}`;
+};
+
 const row = (tc) => (
   <tr key={tc.id}>
     <td>{tc.workDate}</td>
@@ -30,12 +51,12 @@ const row = (tc) => (
     <td>{tc.memo}</td>
     <td>{confirmed(tc)}</td>
     <td>{approved(tc)}</td>
-    <td>{tc.timecardPayRate && tc.timecardPayRate.payRate}</td>
+    <td>{payRates(tc)}</td>
     <td>{tc.agency}</td>
     <td>{tc.type}</td>
     <td>{tc.status}</td>
     <td>{"Image..."}</td>
-    <td>{"Stipend..."}</td>
+    <td>{stipends(tc)}</td>
     <td>{"Total..."}</td>
   </tr>
 );

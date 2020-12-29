@@ -1,7 +1,10 @@
-const url = process.env.API_URL;
+const url = process.env.REACT_APP_API_URL;
 const headers = {
-  Authorization: process.env.JWT,
+  Authorization: process.env.REACT_APP_JWT,
 };
+
+console.log(url);
+console.log(headers.Authorization);
 
 export const fetchTimecards = async () => {
   try {
