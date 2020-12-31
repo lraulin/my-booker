@@ -1,5 +1,9 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+
+const getUserName = (tc) =>
+  tc.user && tc.user.firstName + " " + tc.user.lastName;
 
 const details = ({
   workDate,
@@ -42,27 +46,36 @@ const stipends = ({
   $${stipendRuleAmount} / ${stipendRuleDays}`;
 };
 
-const row = (tc) => (
-  <tr key={tc.id}>
-    <td>{tc.workDate}</td>
-    <td>{tc.createdAt}</td>
-    <td>{tc.user.firstName + " " + tc.user.lastName}</td>
-    <td>{details(tc)}</td>
-    <td>{tc.memo}</td>
-    <td>{confirmed(tc)}</td>
-    <td>{approved(tc)}</td>
-    <td>{payRates(tc)}</td>
-    <td>{tc.agency}</td>
-    <td>{tc.type}</td>
-    <td>{tc.status}</td>
-    <td>{"Image..."}</td>
-    <td>{stipends(tc)}</td>
-    <td>{"Total..."}</td>
-  </tr>
-);
+const Timecards = ({ timecards = [], setSelectedTimecard }) => {
+  const history = useHistory();
+  const handleClick = (tc) => {
+    console.log("Updating selected timecard to " + getUserName(tc));
+    setSelectedTimecard({ ...tc });
+    history.push("/timecards/view");
+  };
 
-const Timecards = ({ timecards = [] }) => {
-  console.log(timecards);
+  const row = (tc) => (
+    <tr key={tc.id}>
+      <td>{tc.workDate}</td>
+      <td>{tc.createdAt}</td>
+      <td>{tc.user.firstName + " " + tc.user.lastName}</td>
+      <td>{details(tc)}</td>
+      <td>{tc.memo}</td>
+      <td>{confirmed(tc)}</td>
+      <td>{approved(tc)}</td>
+      <td>{payRates(tc)}</td>
+      <td>{tc.agency}</td>
+      <td>{tc.type}</td>
+      <td>{tc.status}</td>
+      <td>{tc.timecardPhotoUrls.length}</td>
+      <td>{stipends(tc)}</td>
+      <td>{"Total..."}</td>
+      <td>
+        <Button variant="primary" onClick={() => handleClick(tc)}></Button>
+      </td>
+    </tr>
+  );
+
   return (
     <div>
       <Table striped bordered hover>
@@ -83,6 +96,7 @@ const Timecards = ({ timecards = [] }) => {
               "Image",
               "Stipend",
               "Total",
+              "Inspect",
             ].map((header) => (
               <th>{header}</th>
             ))}
