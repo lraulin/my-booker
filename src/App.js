@@ -1,56 +1,70 @@
-import React, { useState, useEffect } from "react";
-import { fetchTimecards } from "./api";
-import "./App.css";
-import Timecards from "./Timecards";
-import ViewTimecard from "./ViewTimecard";
+import React, { useContext, useState, createContext } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
+  useHistory,
   NavLink,
-} from "react-router-dom";
-import { Nav, Navbar } from "react-bootstrap";
+} from 'react-router-dom';
+import './App.css';
+import Timecards from './Timecards';
+import ViewTimecard from './ViewTimecard';
+import { Button, Nav, Navbar } from 'react-bootstrap';
+import Login from './Login';
+import { ProvideAuth, useAuth } from './use-auth';
+import PrivateRoute from './PrivateRoute';
 
-function App() {
-  const [timecards, setTimecards] = useState([]);
-  const [selectedTimecard, setSelectedTimecard] = useState();
-
-  useEffect(() => {
-    let mounted = true;
-    fetchTimecards().then((items) => {
-      if (mounted && items) {
-        setTimecards(items);
-      }
-    });
-    return () => (mounted = false);
-  }, []);
-
+const App = () => {
   return (
-    <Router>
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link as={NavLink} to="/timecards">
-            Timecards
-          </Nav.Link>
-        </Nav>
-      </Navbar>
-
-      {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-      <Switch>
-        <Route path="/timecards" exact>
-          <Timecards
-            timecards={timecards}
-            setSelectedTimecard={(tc) => setSelectedTimecard({ ...tc })}
-          />
-        </Route>
-        <Route path="/timecards/view">
-          <ViewTimecard tc={selectedTimecard}></ViewTimecard>
-        </Route>
-      </Switch>
-    </Router>
+    <ProvideAuth>
+      <Router>
+        <Navbar bg="dark" variant="dark">
+          <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+          <Nav className="mr-auto">
+            <Nav.Link as={NavLink} to="/timecards">
+              Timecards
+            </Nav.Link>
+          </Nav>
+          <AuthButton />
+        </Navbar>
+        <Switch>
+          <Route path="/login" component={Login} />
+          <PrivateRoute path="/timecards" exact>
+            <Timecards />
+          </PrivateRoute>
+          <PrivateRoute path="/timecards/view">
+            <ViewTimecard />
+          </PrivateRoute>
+        </Switch>
+      </Router>
+    </ProvideAuth>
   );
-}
+};
+
+/** For more details on
+ * `authContext`, `ProvideAuth`, `useAuth` and `useProvideAuth`
+ * refer to: https://usehooks.com/useAuth/
+ */
+
+const AuthButton = () => {
+  let history = useHistory();
+  let auth = useAuth();
+
+  return auth.user ? (
+    <p style={{ color: 'white' }}>
+      Welcome!{' '}
+      <Button
+        variant="danger"
+        onClick={() => {
+          auth.signout(() => history.push('/'));
+        }}
+      >
+        Sign out
+      </Button>
+    </p>
+  ) : (
+    <p style={{ color: 'white' }}>You are not logged in.</p>
+  );
+};
 
 export default App;

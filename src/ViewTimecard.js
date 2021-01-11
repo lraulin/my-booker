@@ -1,12 +1,10 @@
-import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import Inspector from "./Inspector";
-import ImageViewer from "./ImageViewer";
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import Inspector from './Inspector';
+import ImageViewer from './ImageViewer';
 
-const ViewTimecard = ({ tc }) => {
-  console.log("VIEWTIMECARD");
-  console.log(tc.user);
-
+const ViewTimecard = (props) => {
+  const tc = { timecardPhotoUrls: [] };
   return (
     <Container fluid>
       <Row>
