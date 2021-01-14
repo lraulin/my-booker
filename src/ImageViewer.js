@@ -10,7 +10,10 @@ const ImageViewer = ({ timecardPhotoUrls }) => {
     </Pagination.Item>
   ));
 
-  const getImageUrl = () => timecardPhotoUrls[active - 1].url;
+  const getImageUrl = () =>
+    timecardPhotoUrls && timecardPhotoUrls.length
+      ? timecardPhotoUrls[active - 1].url
+      : null;
 
   const handleClickNext = () => {
     if (active + 1 <= timecardPhotoUrls.length) {
