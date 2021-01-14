@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 
 const getWorkerName = (tc) =>
-  tc.user ? tc.user.firstName + " " + tc.user.lastName : "";
+  tc.user ? tc.user.firstName + ' ' + tc.user.lastName : '';
 
 const getPayRates = ({ timecardPayRate }) => {
-  if (!timecardPayRate) return "";
+  if (!timecardPayRate) return '';
   const {
     description,
     payRate,
@@ -15,18 +15,37 @@ const getPayRates = ({ timecardPayRate }) => {
   return `${description}\n${payRate} / ${doubletimePayRate} / ${overtimePayRate}`;
 };
 
-const Inspector = ({ tc }) => {
-  const [viewCard, setViewCard] = useState(tc);
-  const [rate, setRate] = useState(tc.adjustment);
-  const [newNonTaxableAdjustment, setNewNonTaxableAdjustment] = useState(
-    tc.nonTaxableAdjustment
+const float = (n) => Number.parseFloat(n);
+
+const getRegularHours = (tc) =>
+  (float(tc.amount) - float(tc.overtimeAmount) - float(tc.doubletimeAmount)) /
+  float(tc.timecardPayRate.payRate);
+
+const getTotalHours = (tc) =>
+  getRegularHours(tc) + float(tc.overtimeHours) + float(tc.doubletimeHours);
+
+const getTotal = (tc) =>
+  Number.parseFloat(tc.stipendPaymentAmount) + Number.parseFloat(tc.total);
+
+const formatDate = (dateString = '') => {
+  const d = new Date(dateString);
+  const ampm = d.getHours() >= 12 ? 'pm' : 'am';
+  return (
+    d.toDateString() +
+    ' @ ' +
+    (d.getHours() % 12) +
+    ':' +
+    d.getMinutes().toString().padStart(2, '0') +
+    ' ' +
+    ampm +
+    ' (' +
+    d.getHours().toString().padStart(2, '0') +
+    d.getMinutes().toString().padStart(2, '0') +
+    ')'
   );
-  const [newMemo, setNewMemo] = useState(tc.memo);
+};
 
-  useEffect(() => {
-    setViewCard(tc);
-  }, [tc]);
-
+const Inspector = ({ tc }) => {
   return (
     <Form>
       <Form.Group as={Row} controlId="formType">
@@ -38,14 +57,14 @@ const Inspector = ({ tc }) => {
         </Col>
       </Form.Group>
 
-      <Form.Group as={Row} controlId="formShiftDescription">
+      {/* <Form.Group as={Row} controlId="formShiftDescription">
         <Form.Label column sm="2">
           Shift Description
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue="..." />
         </Col>
-      </Form.Group>
+      </Form.Group> */}
 
       <Form.Group as={Row} controlId="formFacility">
         <Form.Label column sm="2">
@@ -65,7 +84,11 @@ const Inspector = ({ tc }) => {
           Unit Number
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.unitNumber} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={tc.unitNumber || '-'}
+          />
         </Col>
       </Form.Group>
 
@@ -74,7 +97,11 @@ const Inspector = ({ tc }) => {
           Facility Manager
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.facilityManager} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={tc.facilityManager || '-'}
+          />
         </Col>
       </Form.Group>
 
@@ -86,7 +113,9 @@ const Inspector = ({ tc }) => {
           <Form.Control
             plaintext
             readOnly
-            defaultValue={tc.timecardPayRate && tc.timecardPayRate.description}
+            defaultValue={
+              (tc.timecardPayRate && tc.timecardPayRate.description) || '-'
+            }
           />
         </Col>
       </Form.Group>
@@ -105,7 +134,11 @@ const Inspector = ({ tc }) => {
           Start Shift
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.startTime} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={formatDate(tc.startTime)}
+          />
         </Col>
       </Form.Group>
 
@@ -114,7 +147,11 @@ const Inspector = ({ tc }) => {
           End Shift
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.endTime} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={formatDate(tc.endTime)}
+          />
         </Col>
       </Form.Group>
 
@@ -123,7 +160,11 @@ const Inspector = ({ tc }) => {
           Lunch
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.lunchInMinutes} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={tc.lunchInMinutes + ' min'}
+          />
         </Col>
       </Form.Group>
 
@@ -132,7 +173,7 @@ const Inspector = ({ tc }) => {
           Regular Hours
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue="???" />
+          <Form.Control plaintext readOnly defaultValue={getRegularHours(tc)} />
         </Col>
       </Form.Group>
 
@@ -141,7 +182,11 @@ const Inspector = ({ tc }) => {
           Overtime Hours
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.overtimeHours} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={float(tc.overtimeHours)}
+          />
         </Col>
       </Form.Group>
 
@@ -150,7 +195,7 @@ const Inspector = ({ tc }) => {
           Total Hours Worked
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue="email@example.com" />
+          <Form.Control plaintext readOnly defaultValue={getTotalHours(tc)} />
         </Col>
       </Form.Group>
 
@@ -224,7 +269,7 @@ const Inspector = ({ tc }) => {
           <Form.Control
             plaintext
             readOnly
-            defaultValue={"$" + tc.stipendPaymentAmount}
+            defaultValue={'$' + tc.stipendPaymentAmount}
           />
         </Col>
       </Form.Group>
@@ -234,7 +279,7 @@ const Inspector = ({ tc }) => {
           Total
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={"$" + tc.total} />
+          <Form.Control plaintext readOnly defaultValue={'$' + getTotal(tc)} />
         </Col>
       </Form.Group>
       <Button variant="success">Approve</Button>

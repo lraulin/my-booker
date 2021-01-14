@@ -1,13 +1,28 @@
 const apiBaseUrl = 'https://www.snapnursebooker.com/api/v1';
 
+const authHeader = (token) => ({
+  Authorization: 'Bearer ' + token,
+});
+
+export const fetchOneTimecard = async (id, token) => {
+  const timecardUrl = apiBaseUrl + '/admin/timecards/' + id;
+  try {
+    console.log('Fetching one timecard from api...');
+    const result = await fetch(timecardUrl, { headers: authHeader(token) });
+    const resbody = await result.json();
+    console.log('Api response:');
+    console.log(resbody);
+    return resbody;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const fetchTimecards = async (token) => {
   const timecardUrl = apiBaseUrl + '/timecards';
-  const headers = {
-    Authorization: 'Bearer ' + token,
-  };
   try {
     console.log('Fetching from api...');
-    const result = await fetch(timecardUrl, { headers });
+    const result = await fetch(timecardUrl, { headers: authHeader(token) });
     const resbody = await result.json();
     console.log('Api response:');
     console.log(resbody);

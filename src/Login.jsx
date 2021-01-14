@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, withRouter } from 'react-router-dom';
 import { useAuth } from 'use-auth';
 // import './Login.css';
 
@@ -11,6 +11,7 @@ const Login = () => {
   const history = useHistory();
   const location = useLocation();
   const auth = useAuth();
+  // @ts-ignore
   const { from } = location.state || { from: { pathname: '/' } };
 
   const validateForm = () => {
@@ -21,10 +22,10 @@ const Login = () => {
     event.preventDefault();
 
     // POST login request
-    auth.signin(email, password);
+    await auth.signin(email, password);
 
     // Redirect on successful login
-    history.push('/timecards');
+    history.replace(from);
   };
 
   return (
@@ -56,4 +57,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default withRouter(Login);

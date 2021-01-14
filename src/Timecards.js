@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { fetchTimecards } from './api';
@@ -50,15 +50,22 @@ const stipends = ({
 
 const Timecards = () => {
   const [timecards, setTimecards] = useState(null);
-  const auth = useAuth();
   const history = useHistory();
+  const auth = useAuth();
+  // const history = useHistory();
+
+  const handleClick = (tc) => {
+    console.log(tc.timecardid);
+    console.log(tc);
+    history.push('/timecards/view?id=' + tc.id);
+  };
 
   const row = (tc) =>
     tc ? (
       <tr key={tc.id}>
         <td>{tc.workDate}</td>
         <td>{tc.createdAt}</td>
-        <td>{tc.user ? tc.user.firstName + ' ' + tc.user.lastName : ''}</td>
+        <td>{getUserName(tc)}</td>
         <td>{details(tc)}</td>
         <td>{tc.memo}</td>
         <td>{confirmed(tc)}</td>
@@ -71,7 +78,7 @@ const Timecards = () => {
         <td>{stipends(tc)}</td>
         <td>{'Total...'}</td>
         <td>
-          {/* <Button variant="primary" onClick={() => handleClick(tc)}></Button> */}
+          <Button variant="primary" onClick={() => handleClick(tc)}></Button>
         </td>
       </tr>
     ) : null;
@@ -86,6 +93,7 @@ const Timecards = () => {
       });
     }
     return () => (mounted = false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
