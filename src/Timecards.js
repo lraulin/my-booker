@@ -4,10 +4,20 @@ import { useHistory } from 'react-router-dom';
 import { fetchTimecards } from './api';
 import { useAuth } from './use-auth';
 
-const getUserName = (tc) => {
-  console.log(tc.user);
-  return tc.user && tc.user.firstName + ' ' + tc.user.lastName;
-};
+const getUserName = (tc) =>
+  tc.user && tc.user.firstName + ' ' + tc.user.lastName;
+
+const float = (str) => Number.parseFloat(str) || 0;
+
+const getTotalAmount = (tc) =>
+  float(
+    (
+      float(tc.amount) +
+      float(tc.overtimeAmount) +
+      float(tc.doubletimeAmount) +
+      float(tc.stipendPaymentAmount)
+    ).toFixed(2),
+  );
 
 const details = ({
   workDate,
@@ -51,7 +61,7 @@ const stipends = ({
 };
 
 const Timecards = () => {
-  const [timecards, setTimecards] = useState(null);
+  const [timecards, setTimecards] = useState([]);
   const history = useHistory();
   const auth = useAuth();
   // const history = useHistory();
@@ -61,29 +71,6 @@ const Timecards = () => {
     console.log(tc);
     history.push('/timecards/view?id=' + tc.id);
   };
-
-  const row = (tc) =>
-    tc ? (
-      <tr key={tc.id}>
-        <td>{tc.workDate}</td>
-        <td>{tc.createdAt}</td>
-        <td>{getUserName(tc)}</td>
-        <td>{details(tc)}</td>
-        <td>{tc.memo}</td>
-        <td>{confirmed(tc)}</td>
-        <td>{approved(tc)}</td>
-        <td>{payRates(tc)}</td>
-        <td>{tc.agency}</td>
-        <td>{tc.type}</td>
-        <td>{tc.status}</td>
-        <td>{tc.timecardPhotoUrls ? tc.timecardPhotoUrls.length : ''}</td>
-        <td>{stipends(tc)}</td>
-        <td>{'Total...'}</td>
-        <td>
-          <Button variant="primary" onClick={() => handleClick(tc)}></Button>
-        </td>
-      </tr>
-    ) : null;
 
   useEffect(() => {
     let mounted = true;
@@ -101,8 +88,46 @@ const Timecards = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const row = (tc) =>
+    tc ? (
+      <tr key={tc.id}>
+        <td>{tc.workDate}</td>
+        <td>{tc.createdAt}</td>
+        <td>{getUserName(tc)}</td>
+        <td>{details(tc)}</td>
+        <td>{tc.memo}</td>
+        <td>{confirmed(tc)}</td>
+        <td>{approved(tc)}</td>
+        <td>{payRates(tc)}</td>
+        <td>{tc.agency}</td>
+        <td>{tc.type}</td>
+        <td>{tc.status}</td>
+        <td>{tc.timecardPhotoUrls ? tc.timecardPhotoUrls.length : ''}</td>
+        <td>{stipends(tc)}</td>
+        <td>${getTotalAmount(tc)}</td>
+        <td>
+          <Button variant="primary" onClick={() => handleClick(tc)}></Button>
+        </td>
+      </tr>
+    ) : null;
+
   return (
     <div>
+      <section id="timecardStats">
+        <p>Total Shown: {timecards.length}</p>
+        <p>
+          Admin Approvals:{' '}
+          {timecards.filter((t) => getTotalAmount(t) >= 2000).length}
+        </p>
+        <p>
+          Zero-Hour:{' '}
+          {
+            timecards.filter(
+              (t) => getTotalAmount(t) <= float(t.stipendPaymentAmount),
+            ).length
+          }
+        </p>
+      </section>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -127,7 +152,7 @@ const Timecards = () => {
             ))}
           </tr>
         </thead>
-        <tbody>{timecards && timecards.map((tc) => row(tc))}</tbody>
+        <tbody>{timecards.map((tc) => row(tc))}</tbody>
       </Table>
     </div>
   );
