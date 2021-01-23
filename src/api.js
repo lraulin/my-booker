@@ -1,4 +1,4 @@
-const apiBaseUrl = 'https://www.snapnursebooker.com/api/v1';
+const apiBaseUrl = 'https://app.snapnurse.com/api/v1';
 
 const authHeader = (token) => ({
   Authorization: 'Bearer ' + token,
@@ -18,15 +18,37 @@ export const fetchOneTimecard = async (id, token) => {
   }
 };
 
-export const fetchTimecards = async (token) => {
-  const timecardUrl = apiBaseUrl + '/timecards';
+export const fetchTimecards = async (authorization) => {
+  const startDate = '2021-01-10';
+  const endDate = '2021-01-22';
   try {
     console.log('Fetching from api...');
-    const result = await fetch(timecardUrl, { headers: authHeader(token) });
+    const result = await fetch(
+      `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY&workDate[$gte]=${startDate}&workDate[$lte]=${endDate}&platformId=1&$limit=100&$skip=0&$sort[createdAt]=-1`,
+
+      {
+        headers: {
+          accept: 'application/json, text/plain, */*',
+          'accept-language': 'en-US,en;q=0.9',
+          authorization,
+          'if-none-match': 'W/"87e67-gQagPz/QZeu/cqOYYc7FtOQM+Fc"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+          'sec-gpc': '1',
+        },
+        referrer: `https://app.snapnurse.com/admin/timecards?page=1&startDate=01/10/2021&endDate=01/22/2021&dateRangeType=workDate&type=HOURLY`,
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: null,
+        method: 'GET',
+        mode: 'cors',
+        // credentials: 'include',
+      },
+    );
     const resbody = await result.json();
     console.log('Api response:');
     console.log(resbody);
-    return resbody.data;
+    return resbody;
   } catch (e) {
     console.log(e);
   }

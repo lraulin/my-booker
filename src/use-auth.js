@@ -20,6 +20,7 @@ const useProvideAuth = () => {
     try {
       console.log('Signing in from useProvideAuth...');
       const res = await login(email, password);
+      console.log(res);
       if (res.user && res.accessToken) {
         console.log('Success!');
         setUser(res.user);

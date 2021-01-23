@@ -4,8 +4,10 @@ import { useHistory } from 'react-router-dom';
 import { fetchTimecards } from './api';
 import { useAuth } from './use-auth';
 
-const getUserName = (tc) =>
-  tc.user && tc.user.firstName + ' ' + tc.user.lastName;
+const getUserName = (tc) => {
+  console.log(tc.user);
+  return tc.user && tc.user.firstName + ' ' + tc.user.lastName;
+};
 
 const details = ({
   workDate,
@@ -86,9 +88,12 @@ const Timecards = () => {
   useEffect(() => {
     let mounted = true;
     if (auth.token) {
-      fetchTimecards(auth.token).then((items) => {
-        if (mounted && items) {
-          setTimecards(items);
+      fetchTimecards(auth.token).then((res) => {
+        if (mounted && res.data) {
+          setTimecards(res.data);
+        } else if (res.message && res.message.includes('Token expired')) {
+          console.log('Token expired. Signing out...');
+          auth.signout();
         }
       });
     }
