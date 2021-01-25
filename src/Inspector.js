@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
+import './Inspector.css';
 
 const getWorkerName = (tc) =>
   tc.user ? tc.user.firstName + ' ' + tc.user.lastName : '';
@@ -50,7 +51,7 @@ const Inspector = ({ tc }) => {
     <Form>
       <Form.Group as={Row} controlId="formType">
         <Form.Label column sm="2">
-          Type
+          <strong>Type</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue={tc.type} />
@@ -68,7 +69,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formFacility">
         <Form.Label column sm="2">
-          Facility
+          <strong>Facility</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -81,7 +82,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formUnitNumber">
         <Form.Label column sm="2">
-          Unit Number
+          <strong>Unit Number</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -94,7 +95,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formFacilityManager">
         <Form.Label column sm="2">
-          Facility Manager
+          <strong>Facility Manager</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -107,7 +108,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formPayRateDescription">
         <Form.Label column sm="2">
-          Pay Rate Description
+          <strong>Pay Rate Description</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -122,7 +123,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formWorker">
         <Form.Label column sm="2">
-          Worker
+          <strong>Worker</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue={getWorkerName(tc)} />
@@ -131,7 +132,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formStartShift">
         <Form.Label column sm="2">
-          Start Shift
+          <strong>Start Shift</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -144,7 +145,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formEndShift">
         <Form.Label column sm="2">
-          End Shift
+          <strong>End Shift</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -157,7 +158,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formLunch">
         <Form.Label column sm="2">
-          Lunch
+          <strong>Lunch</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -170,7 +171,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formRegularHours">
         <Form.Label column sm="2">
-          Regular Hours
+          <strong>Regular Hours</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue={getRegularHours(tc)} />
@@ -179,7 +180,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formOvertimeHours">
         <Form.Label column sm="2">
-          Overtime Hours
+          <strong>Overtime Hours</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -192,7 +193,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formTotalHoursWorked">
         <Form.Label column sm="2">
-          Total Hours Worked
+          <strong>Total Hours Worked</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue={getTotalHours(tc)} />
@@ -201,7 +202,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formRate">
         <Form.Label column sm="2">
-          Rate
+          <strong>Rate</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue={getPayRates(tc)} />
@@ -210,25 +211,29 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formRegularPay">
         <Form.Label column sm="2">
-          Regular Pay
+          <strong>Regular Pay</strong>
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.amount} />
+          <Form.Control plaintext readOnly defaultValue={'$' + tc.amount} />
         </Col>
       </Form.Group>
 
       <Form.Group as={Row} controlId="formOvertimePay">
         <Form.Label column sm="2">
-          Overtime Pay
+          <strong>Overtime Pay</strong>
         </Form.Label>
         <Col sm="10">
-          <Form.Control plaintext readOnly defaultValue={tc.overtimeAmount} />
+          <Form.Control
+            plaintext
+            readOnly
+            defaultValue={'$' + tc.overtimeAmount}
+          />
         </Col>
       </Form.Group>
 
       <Form.Group as={Row} controlId="formNonTaxableAdjustment">
         <Form.Label column sm="2">
-          Non Taxable Adjustment
+          <strong>Non Taxable Adjustment</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control defaultValue="Set non taxable adjustment for a worker" />
@@ -237,7 +242,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formAdjustment">
         <Form.Label column sm="2">
-          Adjustment
+          <strong>Adjustment</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -250,7 +255,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formMemo">
         <Form.Label column sm="2">
-          Memo
+          <strong>Memo</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -263,7 +268,7 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formStipend">
         <Form.Label column sm="2">
-          Stipend(Pro-Rated)
+          <strong>Stipend(Pro-Rated)</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control
@@ -276,16 +281,12 @@ const Inspector = ({ tc }) => {
 
       <Form.Group as={Row} controlId="formTotal">
         <Form.Label column sm="2">
-          Total
+          <strong>Total</strong>
         </Form.Label>
         <Col sm="10">
           <Form.Control plaintext readOnly defaultValue={'$' + getTotal(tc)} />
         </Col>
       </Form.Group>
-      <Button variant="success">Approve</Button>
-      <Button variant="primary">Edit</Button>
-      <Button variant="secondary">Cancel</Button>
-      <Button variant="danger">Remove</Button>
     </Form>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button, ButtonGroup } from 'react-bootstrap';
 import Inspector from './Inspector';
 import ImageViewer from './ImageViewer';
 import { useLocation } from 'react-router-dom';
@@ -43,7 +43,16 @@ const ViewTimecard = (props) => {
             <ImageViewer timecardPhotoUrls={tc.timecardPhotoUrls}></ImageViewer>
           </Col>
           <Col>
-            <Inspector tc={tc}></Inspector>;
+            <Inspector tc={tc}></Inspector>
+          </Col>
+          <Col xs={1}>
+            <ButtonGroup vertical>
+              <Button variant="success">Approve</Button>
+              <Button variant="warning">Reject</Button>
+              <Button variant="primary">Edit</Button>
+              <Button variant="danger">Remove</Button>
+              <Button variant="secondary">Cancel</Button>
+            </ButtonGroup>
           </Col>
         </Row>
       </Container>

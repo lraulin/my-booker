@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { fetchTimecards } from './api';
+import { fetchTimecards, fetchAllTimecards } from './api';
 import { useAuth } from './use-auth';
 
 const getUserName = (tc) =>
@@ -75,10 +75,18 @@ const Timecards = () => {
   useEffect(() => {
     let mounted = true;
     if (auth.token) {
-      fetchTimecards(auth.token).then((res) => {
-        if (mounted && res.data) {
-          setTimecards(res.data);
-        } else if (res.message && res.message.includes('Token expired')) {
+      // fetchTimecards(auth.token).then((res) => {
+      //   if (mounted && res.data) {
+      //     setTimecards(res.data);
+      //   } else if (res.message && res.message.includes('Token expired')) {
+      //     console.log('Token expired. Signing out...');
+      //     auth.signout();
+      //   }
+      // });
+      fetchAllTimecards({ authorization: auth.token }).then((res) => {
+        if (mounted && res.success) {
+          setTimecards(res.timecards);
+        } else if (res.tokenExpired) {
           console.log('Token expired. Signing out...');
           auth.signout();
         }

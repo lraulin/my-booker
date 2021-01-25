@@ -18,13 +18,19 @@ export const fetchOneTimecard = async (id, token) => {
   }
 };
 
-export const fetchTimecards = async (authorization) => {
-  const startDate = '2021-01-10';
-  const endDate = '2021-01-22';
+export const fetchTimecards = (authorization) => fetchX({ authorization });
+
+const fetchX = async ({
+  authorization,
+  startDate = '2021-01-10',
+  endDate = '2021-01-23',
+  skip = 0,
+  limit = 100,
+}) => {
   try {
     console.log('Fetching from api...');
     const result = await fetch(
-      `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY&workDate[$gte]=${startDate}&workDate[$lte]=${endDate}&platformId=1&$limit=100&$skip=0&$sort[createdAt]=-1`,
+      `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY&status[]=submitted&status[]=confirmed&status[]=preapproved&workDate[$gte]=${startDate}&workDate[$lte]=${endDate}&platformId=1&$limit=${limit}&$skip=${skip}&$sort[createdAt]=-1`,
 
       {
         headers: {
@@ -52,6 +58,41 @@ export const fetchTimecards = async (authorization) => {
   } catch (e) {
     console.log(e);
   }
+};
+
+export const fetchAllTimecards = async ({
+  authorization,
+  endDate = '2021-01-25',
+  startDate = '2021-01-10',
+  limit = 100,
+}) => {
+  let timecards = [];
+  let skip = 0;
+  const maxRequests = 10;
+  let count = 0;
+  do {
+    count++;
+    const res = await fetchX({
+      authorization,
+      startDate,
+      endDate,
+      skip,
+      limit,
+    });
+    if (res.message && res.message.includes('Token expired')) {
+      console.log('Token expired');
+      return { success: false, tokenExpired: true };
+    }
+
+    if (res.data && res.data.length) {
+      timecards = timecards.concat(res.data);
+      skip += limit;
+    } else {
+      break;
+    }
+  } while (count <= maxRequests);
+  const success = !!timecards.length;
+  return { success, timecards };
 };
 
 const postData = async (url = '', data = {}) => {
