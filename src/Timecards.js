@@ -19,6 +19,13 @@ const getTotalAmount = (tc) =>
     ).toFixed(2),
   );
 
+// Filter predicate
+const isSuperAdmin = (timecard) => getTotalAmount(timecard) >= 2000;
+
+// Filter predicate
+const notZeroed = (timecard) =>
+  !(getTotalAmount(timecard) <= float(timecard.stipendPaymentAmount));
+
 const details = ({
   workDate,
   startTime,
@@ -64,9 +71,8 @@ const Timecards = () => {
   const [timecards, setTimecards] = useState([]);
   const [page, setPage] = useState(0);
   const [superOnly, setSuperOnly] = useState(false);
-  // const history = useHistory();
+  const history = useHistory();
   const auth = useAuth();
-  // const history = useHistory();
 
   // const handleClick = (tc) => {
   //   console.log(tc.timecardid);
@@ -82,6 +88,7 @@ const Timecards = () => {
       } else if (res.tokenExpired) {
         console.log('Token expired. Signing out...');
         auth.signout();
+        history.push('/');
       } else {
         console.log('Problem fetching timecards...');
         console.log(res);
@@ -142,14 +149,11 @@ const Timecards = () => {
       />
       <Button onClick={refresh}>Fetch Timecards</Button>
       <Button variant="secondary" onClick={toggleSuperOnly}>
-        Show {superOnly ? 'All' : 'Only Super Admin'}
+        Show {superOnly ? 'All Not Zeroed' : 'Only Super Admin'}
       </Button>
       <section id="timecardStats">
         <p>Total Shown: {timecards.length}</p>
-        <p>
-          Admin Approvals:{' '}
-          {timecards.filter((t) => getTotalAmount(t) >= 2000).length}
-        </p>
+        <p>Admin Approvals: {timecards.filter(isSuperAdmin).length}</p>
         <p>
           Zero-Hour:{' '}
           {
@@ -185,10 +189,8 @@ const Timecards = () => {
         </thead>
         <tbody>
           {superOnly
-            ? timecards
-                .filter((t) => getTotalAmount(t) >= 2000)
-                .map((tc) => row(tc))
-            : timecards.map((tc) => row(tc))}
+            ? timecards.filter(isSuperAdmin).map(row)
+            : timecards.filter(notZeroed).map(row)}
         </tbody>
       </Table>
     </div>
