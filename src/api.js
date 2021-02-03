@@ -18,15 +18,14 @@ export const fetchOneTimecard = async (id, token) => {
   }
 };
 
-export const fetchTimecards = (authorization) => fetchX({ authorization });
-
-const fetchX = async ({
+export const fetchX = async ({
   authorization,
-  startDate = '2021-01-10',
-  endDate = '2021-01-23',
-  skip = 0,
+  endDate = formatDate(new Date()),
+  startDate = formatDate(dateOffset(-14)),
+  page = 0,
   limit = 100,
 }) => {
+  const skip = page * limit;
   try {
     console.log('Fetching from api...');
     const result = await fetch(
@@ -60,14 +59,20 @@ const fetchX = async ({
   }
 };
 
+const dateOffset = (days) =>
+  new Date(new Date().setDate(new Date().getDate() + days));
+
+// YYYY-MM-DD
+const formatDate = (date) => date.toISOString().slice(0, 10);
+
 export const fetchAllTimecards = async ({
   authorization,
-  endDate = '2021-01-25',
-  startDate = '2021-01-10',
+  endDate = formatDate(new Date()),
+  startDate = formatDate(dateOffset(-14)),
   limit = 100,
 }) => {
   let timecards = [];
-  let skip = 0;
+  let page = 0;
   const maxRequests = 10;
   let count = 0;
   do {
@@ -76,7 +81,7 @@ export const fetchAllTimecards = async ({
       authorization,
       startDate,
       endDate,
-      skip,
+      page,
       limit,
     });
     if (res.message && res.message.includes('Token expired')) {
@@ -86,7 +91,7 @@ export const fetchAllTimecards = async ({
 
     if (res.data && res.data.length) {
       timecards = timecards.concat(res.data);
-      skip += limit;
+      page += limit;
     } else {
       break;
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { fetchTimecards, fetchAllTimecards } from './api';
+import { fetchX } from './api';
 import { useAuth } from './use-auth';
 
 const getUserName = (tc) =>
@@ -13,8 +13,8 @@ const getTotalAmount = (tc) =>
   float(
     (
       float(tc.amount) +
-      float(tc.overtimeAmount) +
-      float(tc.doubletimeAmount) +
+      // float(tc.overtimeAmount) +
+      // float(tc.doubletimeAmount) +
       float(tc.stipendPaymentAmount)
     ).toFixed(2),
   );
@@ -62,38 +62,40 @@ const stipends = ({
 
 const Timecards = () => {
   const [timecards, setTimecards] = useState([]);
-  const history = useHistory();
+  const [page, setPage] = useState(0);
+  const [superOnly, setSuperOnly] = useState(false);
+  // const history = useHistory();
   const auth = useAuth();
   // const history = useHistory();
 
-  const handleClick = (tc) => {
-    console.log(tc.timecardid);
-    console.log(tc);
-    history.push('/timecards/view?id=' + tc.id);
+  // const handleClick = (tc) => {
+  //   console.log(tc.timecardid);
+  //   console.log(tc);
+  //   history.push('/timecards/view?id=' + tc.id);
+  // };
+
+  const refresh = () => {
+    fetchX({ authorization: auth.token, page }).then((res) => {
+      if (res.data && res.data.length) {
+        localStorage.setItem('timecards', JSON.stringify(res.data));
+        setTimecards(res.data);
+      } else if (res.tokenExpired) {
+        console.log('Token expired. Signing out...');
+        auth.signout();
+      } else {
+        console.log('Problem fetching timecards...');
+        console.log(res);
+      }
+    });
   };
 
+  const toggleSuperOnly = () => setSuperOnly(!superOnly);
+
   useEffect(() => {
-    let mounted = true;
-    if (auth.token) {
-      // fetchTimecards(auth.token).then((res) => {
-      //   if (mounted && res.data) {
-      //     setTimecards(res.data);
-      //   } else if (res.message && res.message.includes('Token expired')) {
-      //     console.log('Token expired. Signing out...');
-      //     auth.signout();
-      //   }
-      // });
-      fetchAllTimecards({ authorization: auth.token }).then((res) => {
-        if (mounted && res.success) {
-          setTimecards(res.timecards);
-        } else if (res.tokenExpired) {
-          console.log('Token expired. Signing out...');
-          auth.signout();
-        }
-      });
+    const tcs = JSON.parse(localStorage.getItem('timecards'));
+    if (tcs && tcs.length) {
+      setTimecards(tcs);
     }
-    return () => (mounted = false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const row = (tc) =>
@@ -114,13 +116,34 @@ const Timecards = () => {
         <td>{stipends(tc)}</td>
         <td>${getTotalAmount(tc)}</td>
         <td>
-          <Button variant="primary" onClick={() => handleClick(tc)}></Button>
+          <a
+            href={`https://app.snapnurse.com/admin/timecards?type=HOURLY&dateRangeType=workDate&page=1&userId=${tc.userId}`}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() =>
+              setTimecards(timecards.filter((t) => t.userId !== tc.userId))
+            }
+            style={tc.visited ? { color: 'red' } : null}
+          >
+            Open in Booker
+          </a>
+          {/* <Button variant="primary" onClick={() => handleClick(tc)}></Button> */}
         </td>
       </tr>
     ) : null;
 
   return (
     <div>
+      <input
+        type="number"
+        value={page}
+        min="0"
+        onChange={(e) => setPage(Number.parseInt(e.target.value))}
+      />
+      <Button onClick={refresh}>Fetch Timecards</Button>
+      <Button variant="secondary" onClick={toggleSuperOnly}>
+        Show {superOnly ? 'All' : 'Only Super Admin'}
+      </Button>
       <section id="timecardStats">
         <p>Total Shown: {timecards.length}</p>
         <p>
@@ -160,7 +183,13 @@ const Timecards = () => {
             ))}
           </tr>
         </thead>
-        <tbody>{timecards.map((tc) => row(tc))}</tbody>
+        <tbody>
+          {superOnly
+            ? timecards
+                .filter((t) => getTotalAmount(t) >= 2000)
+                .map((tc) => row(tc))
+            : timecards.map((tc) => row(tc))}
+        </tbody>
       </Table>
     </div>
   );
