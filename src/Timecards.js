@@ -32,13 +32,39 @@ const details = ({
   endTime,
   lunchInMinutes,
   overtimeHours,
+  doubletimeHours,
   weeklyHours,
-}) =>
-  `${workDate}
-  ${startTime} - ${endTime}
-  ${lunchInMinutes} min lunch
-  Overtime hours=${overtimeHours}
-  Weekly hours=${weeklyHours}`;
+}) => (
+  <>
+    <div>
+      <strong>Start: </strong>
+      {startTime}
+    </div>
+    <div>
+      <strong>Stop: </strong>
+      {endTime}
+    </div>
+    <div>
+      <strong>Lunch: </strong>
+      {lunchInMinutes}
+    </div>
+    <div>
+      <strong>Overtime hours: </strong>
+      {overtimeHours}
+    </div>
+    {Number.parseFloat(doubletimeHours) ? (
+      <div>
+        <strong>Overtime hours: </strong>
+        {doubletimeHours}
+      </div>
+    ) : null}
+
+    <div>
+      <strong>Weekly hours: </strong>
+      {weeklyHours}
+    </div>
+  </>
+);
 
 const confirmed = ({ confirmUserId, confirmedAt }) =>
   confirmUserId ? `User #${confirmUserId} on ${confirmedAt}` : '';
@@ -85,7 +111,7 @@ const Timecards = () => {
       if (res.data && res.data.length) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
         setTimecards(res.data);
-      } else if (res.tokenExpired) {
+      } else if (res.name === 'Forbidden') {
         console.log('Token expired. Signing out...');
         auth.signout();
         history.push('/');
@@ -112,9 +138,6 @@ const Timecards = () => {
         <td>{tc.createdAt}</td>
         <td>{getUserName(tc)}</td>
         <td>{details(tc)}</td>
-        <td>{tc.memo}</td>
-        <td>{confirmed(tc)}</td>
-        <td>{approved(tc)}</td>
         <td>{payRates(tc)}</td>
         <td>{tc.agency}</td>
         <td>{tc.type}</td>
@@ -171,9 +194,6 @@ const Timecards = () => {
               'Created At',
               'Worker',
               'Details',
-              'Memo',
-              'Confirmed',
-              'Approved',
               'Pay Rates',
               'Agency',
               'Type',
