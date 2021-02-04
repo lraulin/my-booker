@@ -171,7 +171,7 @@ const Timecards = () => {
       <input
         type="number"
         value={page}
-        min="0"
+        min="1"
         onChange={(e) => setPage(Number.parseInt(e.target.value))}
       />
       <Button onClick={refresh}>Fetch Timecards</Button>
