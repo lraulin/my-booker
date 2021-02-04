@@ -3,16 +3,17 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  useHistory,
   NavLink,
 } from 'react-router-dom';
 import './App.css';
 import Timecards from './Timecards';
 import ViewTimecard from './ViewTimecard';
-import { Button, Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
 import Login from './Login';
-import { ProvideAuth, useAuth } from './use-auth';
+import { ProvideAuth } from './use-auth';
 import PrivateRoute from './PrivateRoute';
+import AuthButton from './AuthButton';
+import HolidayPay from 'HolidayPay';
 
 const App = () => {
   return (
@@ -23,6 +24,9 @@ const App = () => {
           <Nav className="mr-auto">
             <Nav.Link as={NavLink} to="/timecards">
               Timecards
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/holiday-pay-calculator">
+              Holiday Pay Calculator
             </Nav.Link>
           </Nav>
           <AuthButton />
@@ -35,35 +39,12 @@ const App = () => {
           <PrivateRoute path="/timecards/view">
             <ViewTimecard />
           </PrivateRoute>
+          <PrivateRoute path="/holiday-pay-calculator" exact>
+            <HolidayPay />
+          </PrivateRoute>
         </Switch>
       </Router>
     </ProvideAuth>
-  );
-};
-
-/** For more details on
- * `authContext`, `ProvideAuth`, `useAuth` and `useProvideAuth`
- * refer to: https://usehooks.com/useAuth/
- */
-
-const AuthButton = () => {
-  let history = useHistory();
-  let auth = useAuth();
-
-  return auth.user ? (
-    <p style={{ color: 'white' }}>
-      Welcome!{' '}
-      <Button
-        variant="danger"
-        onClick={() => {
-          auth.signout(() => history.push('/'));
-        }}
-      >
-        Sign out
-      </Button>
-    </p>
-  ) : (
-    <p style={{ color: 'white' }}>You are not logged in.</p>
   );
 };
 
