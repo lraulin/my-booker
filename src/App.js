@@ -39,9 +39,9 @@ const App = () => {
           <PrivateRoute path="/timecards/view">
             <ViewTimecard />
           </PrivateRoute>
-          <PrivateRoute path="/holiday-pay-calculator" exact>
+          <Route path="/holiday-pay-calculator">
             <HolidayPay />
-          </PrivateRoute>
+          </Route>
         </Switch>
       </Router>
     </ProvideAuth>
