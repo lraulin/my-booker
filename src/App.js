@@ -17,9 +17,9 @@ import PrivateRoute from './PrivateRoute';
 const App = () => {
   return (
     <ProvideAuth>
-      <Router basename={'/my-booker'}>
+      <Router basename="/my-booker">
         <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+          <Navbar.Brand href="">Navbar</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Link as={NavLink} to="/timecards">
               Timecards
