@@ -95,7 +95,8 @@ const stipends = ({
 
 const Timecards = () => {
   const [timecards, setTimecards] = useState([]);
-  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [superOnly, setSuperOnly] = useState(false);
   const history = useHistory();
   const auth = useAuth();
@@ -107,10 +108,12 @@ const Timecards = () => {
   // };
 
   const refresh = () => {
-    fetchX({ authorization: auth.token, page }).then((res) => {
+    fetchX({ authorization: auth.token, page: page - 1 }).then((res) => {
       if (res.data && res.data.length) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
+        localStorage.setItem('total', JSON.stringify(res.total));
         setTimecards(res.data);
+        setTotal(res.total);
       } else if (res.name === 'Forbidden') {
         console.log('Token expired. Signing out...');
         auth.signout();
@@ -128,6 +131,7 @@ const Timecards = () => {
     const tcs = JSON.parse(localStorage.getItem('timecards'));
     if (tcs && tcs.length) {
       setTimecards(tcs);
+      setTotal(Number.parseInt(localStorage.getItem('total')));
     }
   }, []);
 
@@ -175,16 +179,18 @@ const Timecards = () => {
         Show {superOnly ? 'All Not Zeroed' : 'Only Super Admin'}
       </Button>
       <section id="timecardStats">
-        <p>Total Shown: {timecards.length}</p>
-        <p>Admin Approvals: {timecards.filter(isSuperAdmin).length}</p>
-        <p>
-          Zero-Hour:{' '}
+        <span style={{ paddingRight: '3em' }}>Total Timecards: {total}</span>
+        <span style={{ paddingRight: '3em' }}>
+          Admin Approvals (this page): {timecards.filter(isSuperAdmin).length}
+        </span>
+        <span style={{ paddingRight: '3em' }}>
+          Zero-Hour (this page):{' '}
           {
             timecards.filter(
               (t) => getTotalAmount(t) <= float(t.stipendPaymentAmount),
             ).length
           }
-        </p>
+        </span>
       </section>
       <Table striped bordered hover>
         <thead>
