@@ -214,14 +214,6 @@ function Timecards() {
         <span style={{ paddingRight: '3em' }}>
           Admin Approvals (this page): {timecards.filter(isSuperAdmin).length}
         </span>
-        <span style={{ paddingRight: '3em' }}>
-          Zero-Hour (this page):{' '}
-          {
-            timecards.filter(
-              (t) => getTotalAmount(t) <= float(t.stipendPaymentAmount),
-            ).length
-          }
-        </span>
       </section>
       {table}
     </div>
