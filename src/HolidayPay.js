@@ -20,7 +20,7 @@ const downloadToFile = (content, filename, contentType) => {
 };
 
 function HolidayPay() {
-  const date = '2021-01-01';
+  const date = '2021-01-01'; // Hardcoded for New Year's 2021: TODO: make it use nearest holiday or all holidays
   const [output, setOutput] = useState('');
   const [approvalNeeded, setApprovalNeeded] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +32,7 @@ function HolidayPay() {
   };
 
   const uploadFile = (event) => {
+    clearData();
     setIsLoading(true);
     const fileObj = event.target.files[0]; // We've not allowed multiple files.
     const reader = new FileReader();

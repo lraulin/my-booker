@@ -8,7 +8,8 @@ import {
 import './App.css';
 import Timecards from './Timecards';
 import ViewTimecard from './ViewTimecard';
-import { Nav, Navbar } from 'react-bootstrap';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import Login from './Login';
 import { ProvideAuth } from './use-auth';
 import PrivateRoute from './PrivateRoute';

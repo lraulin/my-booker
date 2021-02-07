@@ -89,6 +89,9 @@ const stipends = ({
   $${stipendRuleAmount} / ${stipendRuleDays}`;
 };
 
+/**
+ * COMPONENT
+ */
 function Timecards() {
   const [timecards, setTimecards] = useState([]);
   const [total, setTotal] = useState(0);
