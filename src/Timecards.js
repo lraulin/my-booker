@@ -3,6 +3,8 @@ import { Button, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { fetchX } from './api';
 import { useAuth } from './use-auth';
+import Loader from 'react-loader-spinner';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 const getUserName = (tc) =>
   tc.user && tc.user.firstName + ' ' + tc.user.lastName;
@@ -66,12 +68,6 @@ const details = ({
   </>
 );
 
-const confirmed = ({ confirmUserId, confirmedAt }) =>
-  confirmUserId ? `User #${confirmUserId} on ${confirmedAt}` : '';
-
-const approved = ({ approvedUserId, approvedAt }) =>
-  approvedUserId ? `User #${approvedUserId} on ${approvedAt}` : '';
-
 const payRates = ({ timecardPayRate }) => {
   if (!timecardPayRate) return '';
   const {
@@ -98,6 +94,7 @@ const Timecards = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [superOnly, setSuperOnly] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
   const auth = useAuth();
 
@@ -108,6 +105,7 @@ const Timecards = () => {
   // };
 
   const refresh = () => {
+    setIsLoading(true);
     fetchX({ authorization: auth.token, page: page - 1 }).then((res) => {
       if (res.data && res.data.length) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
@@ -122,6 +120,7 @@ const Timecards = () => {
         console.log('Problem fetching timecards...');
         console.log(res);
       }
+      setIsLoading(false);
     });
   };
 
@@ -166,6 +165,44 @@ const Timecards = () => {
       </tr>
     ) : null;
 
+  const table = isLoading ? (
+    <Loader
+      type="Puff"
+      color="#00BFFF"
+      height={100}
+      width={100}
+      timeout={3000} //3 secs
+    />
+  ) : (
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          {[
+            'Work Date',
+            'Created At',
+            'Worker',
+            'Details',
+            'Pay Rates',
+            'Agency',
+            'Type',
+            'Status',
+            'Image',
+            'Stipend',
+            'Total',
+            'Inspect',
+          ].map((header) => (
+            <th>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {superOnly
+          ? timecards.filter(isSuperAdmin).map(row)
+          : timecards.filter(notZeroed).map(row)}
+      </tbody>
+    </Table>
+  );
+
   return (
     <div>
       <input
@@ -192,33 +229,7 @@ const Timecards = () => {
           }
         </span>
       </section>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            {[
-              'Work Date',
-              'Created At',
-              'Worker',
-              'Details',
-              'Pay Rates',
-              'Agency',
-              'Type',
-              'Status',
-              'Image',
-              'Stipend',
-              'Total',
-              'Inspect',
-            ].map((header) => (
-              <th>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {superOnly
-            ? timecards.filter(isSuperAdmin).map(row)
-            : timecards.filter(notZeroed).map(row)}
-        </tbody>
-      </Table>
+      {table}
     </div>
   );
 };
