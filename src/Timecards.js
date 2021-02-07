@@ -89,7 +89,7 @@ const stipends = ({
   $${stipendRuleAmount} / ${stipendRuleDays}`;
 };
 
-const Timecards = () => {
+function Timecards() {
   const [timecards, setTimecards] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -232,6 +232,6 @@ const Timecards = () => {
       {table}
     </div>
   );
-};
+}
 
 export default Timecards;

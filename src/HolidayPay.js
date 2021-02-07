@@ -6,6 +6,7 @@ import Table from 'react-bootstrap/Table';
 import CopyButton from './CopyButton';
 import { updateClipboard, postData } from './lib';
 import BookerUrl from './BookerUrl';
+import Loader from 'react-loader-spinner';
 
 const downloadToFile = (content, filename, contentType) => {
   const a = document.createElement('a');
@@ -18,10 +19,11 @@ const downloadToFile = (content, filename, contentType) => {
   URL.revokeObjectURL(a.href);
 };
 
-const HolidayPay = () => {
+function HolidayPay() {
   const date = '2021-01-01';
   const [output, setOutput] = useState('');
   const [approvalNeeded, setApprovalNeeded] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClickDownload = () => {
     const filename =
@@ -30,12 +32,14 @@ const HolidayPay = () => {
   };
 
   const uploadFile = (event) => {
+    setIsLoading(true);
     const fileObj = event.target.files[0]; // We've not allowed multiple files.
     const reader = new FileReader();
 
     try {
       reader.readAsText(fileObj); // read the filek
     } catch (e) {
+      setIsLoading(false);
       console.log(e);
     }
 
@@ -57,9 +61,11 @@ const HolidayPay = () => {
           JSON.stringify(super_admin_list),
         );
       }
+      setIsLoading(false);
     };
 
     reader.onerror = () => {
+      setIsLoading(false);
       console.log(reader.error);
     };
   };
@@ -72,6 +78,7 @@ const HolidayPay = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const data = localStorage.getItem('output');
     try {
       const super_admin_list = JSON.parse(
@@ -86,12 +93,113 @@ const HolidayPay = () => {
     } catch (e) {
       console.log(e);
     }
+    setIsLoading(false);
   }, []);
 
   const handleNameClick = (name) => {
     updateClipboard(name);
     setApprovalNeeded(approvalNeeded.filter((n) => n !== name));
   };
+
+  const table = isLoading ? (
+    <Loader
+      type="Puff"
+      color="#00BFFF"
+      height={100}
+      width={100}
+      timeout={9000} //9 secs
+    />
+  ) : output ? (
+    <div id="outputDisplay">
+      <div>
+        <em>{output.split('\n').length - 3} Total Timecards</em>
+      </div>
+
+      <div className="float-right">
+        <Button variant="danger" onClick={clearData}>
+          Reset
+        </Button>
+        <Button variant="info" onClick={handleClickDownload}>
+          Download
+        </Button>
+      </div>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Created At</th>
+            <th>Worker</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Total Hours</th>
+            <th>Overtime</th>
+            <th>Pay Rate</th>
+            <th>Memo</th>
+            <th>Adjustment</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {output
+            .split('\n')
+            .slice(1)
+            .map((line) => {
+              const [
+                num,
+                created,
+                name,
+                start,
+                end,
+                hrs,
+                ot,
+                rate,
+                hol,
+                pay,
+                total,
+              ] = line.split(',');
+              const style =
+                Number.parseFloat(total) >= 2000 ? { color: 'red' } : {};
+              return (
+                <tr style={style}>
+                  {(() => (
+                    <>
+                      <td>{num}</td>
+                      <td>{created}</td>
+                      <td>
+                        {name}
+                        <div className="float-right">
+                          <CopyButton text={name} />
+                        </div>
+                      </td>
+                      <td>{start}</td>
+                      <td>{end}</td>
+                      <td>{hrs}</td>
+                      <td>{ot}</td>
+                      <td>${rate}</td>
+                      <td>
+                        {hol} HOL
+                        <div className="float-right">
+                          <CopyButton text={hol + ' HOL'} />
+                        </div>
+                      </td>
+                      <td>
+                        ${pay}
+                        <div className="float-right">
+                          <CopyButton
+                            text={Number.parseFloat(pay).toFixed(2)}
+                          />
+                        </div>
+                      </td>
+                      <td>${total}</td>
+                    </>
+                  ))()}
+                </tr>
+              );
+            })}
+        </tbody>
+      </Table>
+    </div>
+  ) : null;
 
   return (
     <div className="App">
@@ -115,99 +223,9 @@ const HolidayPay = () => {
           ))}
         </>
       ) : null}
-      {output ? (
-        <div id="outputDisplay">
-          <div>
-            <em>{output.split('\n').length - 3} Total Timecards</em>
-          </div>
-
-          <div className="float-right">
-            <Button variant="danger" onClick={clearData}>
-              Reset
-            </Button>
-            <Button variant="info" onClick={handleClickDownload}>
-              Download
-            </Button>
-          </div>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Created At</th>
-                <th>Worker</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Total Hours</th>
-                <th>Overtime</th>
-                <th>Pay Rate</th>
-                <th>Memo</th>
-                <th>Adjustment</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {output
-                .split('\n')
-                .slice(1)
-                .map((line) => {
-                  const [
-                    num,
-                    created,
-                    name,
-                    start,
-                    end,
-                    hrs,
-                    ot,
-                    rate,
-                    hol,
-                    pay,
-                    total,
-                  ] = line.split(',');
-                  const style =
-                    Number.parseFloat(total) >= 2000 ? { color: 'red' } : {};
-                  return (
-                    <tr style={style}>
-                      {(() => (
-                        <>
-                          <td>{num}</td>
-                          <td>{created}</td>
-                          <td>
-                            {name}
-                            <div className="float-right">
-                              <CopyButton text={name} />
-                            </div>
-                          </td>
-                          <td>{start}</td>
-                          <td>{end}</td>
-                          <td>{hrs}</td>
-                          <td>{ot}</td>
-                          <td>${rate}</td>
-                          <td>
-                            {hol} HOL
-                            <div className="float-right">
-                              <CopyButton text={hol + ' HOL'} />
-                            </div>
-                          </td>
-                          <td>
-                            ${pay}
-                            <div className="float-right">
-                              <CopyButton
-                                text={Number.parseFloat(pay).toFixed(2)}
-                              />
-                            </div>
-                          </td>
-                          <td>${total}</td>
-                        </>
-                      ))()}
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </Table>
-        </div>
-      ) : null}
+      {table}
     </div>
   );
-};
+}
 
 export default HolidayPay;
