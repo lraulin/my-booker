@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { fetchX } from './api';
+import { fetchTimecards } from './api';
 import { useAuth } from './use-auth';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
@@ -23,10 +23,6 @@ const getTotalAmount = (tc) =>
 
 // Filter predicate
 const isSuperAdmin = (timecard) => getTotalAmount(timecard) >= 2000;
-
-// Filter predicate
-const notZeroed = (timecard) =>
-  !(getTotalAmount(timecard) <= float(timecard.stipendPaymentAmount));
 
 const details = ({
   workDate,
@@ -101,30 +97,26 @@ function Timecards() {
   const history = useHistory();
   const auth = useAuth();
 
-  // const handleClick = (tc) => {
-  //   console.log(tc.timecardid);
-  //   console.log(tc);
-  //   history.push('/timecards/view?id=' + tc.id);
-  // };
-
   const refresh = () => {
     setIsLoading(true);
-    fetchX({ authorization: auth.token, page: page - 1 }).then((res) => {
-      if (res.data && res.data.length) {
-        localStorage.setItem('timecards', JSON.stringify(res.data));
-        localStorage.setItem('total', JSON.stringify(res.total));
-        setTimecards(res.data);
-        setTotal(res.total);
-      } else if (res.name === 'Forbidden') {
-        console.log('Token expired. Signing out...');
-        auth.signout();
-        history.push('/');
-      } else {
-        console.log('Problem fetching timecards...');
-        console.log(res);
-      }
-      setIsLoading(false);
-    });
+    fetchTimecards({ authorization: auth.token, page: page - 1 }).then(
+      (res) => {
+        if (res.data && res.data.length) {
+          localStorage.setItem('timecards', JSON.stringify(res.data));
+          localStorage.setItem('total', JSON.stringify(res.total));
+          setTimecards(res.data);
+          setTotal(res.total);
+        } else if (res.name === 'Forbidden') {
+          console.log('Token expired. Signing out...');
+          auth.signout();
+          history.push('/');
+        } else {
+          console.log('Problem fetching timecards...');
+          console.log(res);
+        }
+        setIsLoading(false);
+      },
+    );
   };
 
   const toggleSuperOnly = () => setSuperOnly(!superOnly);
@@ -163,7 +155,6 @@ function Timecards() {
           >
             Open in Booker
           </a>
-          {/* <Button variant="primary" onClick={() => handleClick(tc)}></Button> */}
         </td>
       </tr>
     ) : null;
@@ -201,7 +192,7 @@ function Timecards() {
       <tbody>
         {superOnly
           ? timecards.filter(isSuperAdmin).map(row)
-          : timecards.filter(notZeroed).map(row)}
+          : timecards.map(row)}
       </tbody>
     </Table>
   );
@@ -216,7 +207,7 @@ function Timecards() {
       />
       <Button onClick={refresh}>Fetch Timecards</Button>
       <Button variant="secondary" onClick={toggleSuperOnly}>
-        Show {superOnly ? 'All Not Zeroed' : 'Only Super Admin'}
+        Show {superOnly ? 'All Timecards' : 'Only Super Admin'}
       </Button>
       <section id="timecardStats">
         <span style={{ paddingRight: '3em' }}>Total Timecards: {total}</span>

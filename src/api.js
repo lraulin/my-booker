@@ -18,7 +18,7 @@ export const fetchOneTimecard = async (id, token) => {
   }
 };
 
-export const fetchX = async ({
+export const fetchTimecards = async ({
   authorization,
   endDate = formatDate(new Date()),
   startDate = formatDate(dateOffset(-14)),
@@ -77,7 +77,7 @@ export const fetchAllTimecards = async ({
   let count = 0;
   do {
     count++;
-    const res = await fetchX({
+    const res = await fetchTimecards({
       authorization,
       startDate,
       endDate,
