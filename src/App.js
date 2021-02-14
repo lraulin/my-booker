@@ -29,6 +29,30 @@ const App = () => {
             <Nav.Link as={NavLink} to="/holiday-pay-calculator">
               Holiday Pay Calculator
             </Nav.Link>
+            <a
+              className="nav-link"
+              href="https://chat.google.com/u/1/room/AAAA1tx9m64"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Team Chat
+            </a>
+            <a
+              className="nav-link"
+              href="https://snapnurse.paymint.today/worker/timecards"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Internal Payroll
+            </a>
+            <a
+              className="nav-link"
+              href="https://mail.google.com/mail/u/1/#inbox"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Gmail
+            </a>
           </Nav>
           <AuthButton />
         </Navbar>
