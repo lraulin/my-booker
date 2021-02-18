@@ -118,18 +118,31 @@ const postData = async (url = '', data = {}) => {
   return response.json(); // parses JSON response into native JavaScript objects
 };
 
-export const login = async (email = '', password = '') => {
+export const login = async (login = '', password = '') => {
   try {
     console.log('Logging in...');
-    const authUrl = apiBaseUrl + '/authentication';
-    const responseData = await postData(authUrl, {
-      strategy: 'local',
-      email,
-      password,
+    const res = await fetch('https://app.snapnurse.com/api/v1/authentication', {
+      headers: {
+        accept: 'application/json, text/plain, */*',
+        'accept-language': 'en-US,en;q=0.9',
+        'content-type': 'application/json;charset=UTF-8',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'sec-gpc': '1',
+      },
+      referrer: 'https://app.snapnurse.com/login',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      body: JSON.stringify({ strategy: 'local', login, password }),
+      method: 'POST',
+      mode: 'cors',
+      // credentials: 'include',
     });
+
     console.log('Api response:');
-    console.log(responseData);
-    return responseData;
+    const resbody = await res.json();
+    console.log(resbody);
+    return resbody;
   } catch (error) {
     console.log(error);
   }
