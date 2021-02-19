@@ -145,7 +145,7 @@ function Timecards() {
         <td>${getTotalAmount(tc)}</td>
         <td>
           <Button onClick={() => history.push('/timecards/view?id=' + tc.id)}>
-            Inspect
+            Actions
           </Button>
           <a
             href={`https://app.snapnurse.com/admin/timecards?type=HOURLY&dateRangeType=workDate&page=1&userId=${tc.userId}`}
