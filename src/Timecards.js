@@ -5,6 +5,9 @@ import { fetchTimecards } from './api';
 import { useAuth } from './use-auth';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import DatePicker from 'react-datepicker';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 const getUserName = (tc) =>
   tc.user && tc.user.firstName + ' ' + tc.user.lastName;
@@ -94,29 +97,32 @@ function Timecards() {
   const [page, setPage] = useState(1);
   const [superOnly, setSuperOnly] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [endDate, setEndDate] = useState(new Date());
   const history = useHistory();
   const auth = useAuth();
 
   const refresh = () => {
     setIsLoading(true);
-    fetchTimecards({ authorization: auth.token, page: page - 1 }).then(
-      (res) => {
-        if (res.data && res.data.length) {
-          localStorage.setItem('timecards', JSON.stringify(res.data));
-          localStorage.setItem('total', JSON.stringify(res.total));
-          setTimecards(res.data);
-          setTotal(res.total);
-        } else if (res.name === 'Forbidden') {
-          console.log('Token expired. Signing out...');
-          auth.signout();
-          history.push('/');
-        } else {
-          console.log('Problem fetching timecards...');
-          console.log(res);
-        }
-        setIsLoading(false);
-      },
-    );
+    fetchTimecards({
+      authorization: auth.token,
+      end: endDate,
+      page: page - 1,
+    }).then((res) => {
+      if (res.data && res.data.length) {
+        localStorage.setItem('timecards', JSON.stringify(res.data));
+        localStorage.setItem('total', JSON.stringify(res.total));
+        setTimecards(res.data);
+        setTotal(res.total);
+      } else if (res.name === 'Forbidden') {
+        console.log('Token expired. Signing out...');
+        auth.signout();
+        history.push('/');
+      } else {
+        console.log('Problem fetching timecards...');
+        console.log(res);
+      }
+      setIsLoading(false);
+    });
   };
 
   const toggleSuperOnly = () => setSuperOnly(!superOnly);
@@ -202,6 +208,9 @@ function Timecards() {
 
   return (
     <div>
+      <span>End Date: </span>
+      <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+      <span>Page: </span>
       <input
         type="number"
         value={page}

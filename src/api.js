@@ -20,11 +20,12 @@ export const fetchOneTimecard = async (id, token) => {
 
 export const fetchTimecards = async ({
   authorization,
-  endDate = formatDate(new Date()),
-  startDate = formatDate(dateOffset(-14)),
+  end,
   page = 0,
   limit = 100,
 }) => {
+  const endDate = formatDate(end);
+  const startDate = formatDate(dateOffset(-14));
   const skip = page * limit;
   try {
     console.log('Fetching from api...');
