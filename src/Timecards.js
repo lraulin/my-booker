@@ -98,6 +98,7 @@ function Timecards() {
   const [superOnly, setSuperOnly] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [endDate, setEndDate] = useState(new Date());
+  const [updated, setUpdated] = useState(null);
   const history = useHistory();
   const auth = useAuth();
 
@@ -108,11 +109,14 @@ function Timecards() {
       end: endDate,
       page: page - 1,
     }).then((res) => {
+      const newUpdated = new Date();
       if (res.data && res.data.length) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
         localStorage.setItem('total', JSON.stringify(res.total));
+        localStorage.setItem('updated', newUpdated.toISOString());
         setTimecards(res.data);
         setTotal(res.total);
+        setUpdated(newUpdated);
       } else if (res.name === 'Forbidden') {
         console.log('Token expired. Signing out...');
         auth.signout();
@@ -132,6 +136,7 @@ function Timecards() {
     if (tcs && tcs.length) {
       setTimecards(tcs);
       setTotal(Number.parseInt(localStorage.getItem('total')));
+      setUpdated(new Date(localStorage.getItem('updated')));
     }
   }, []);
 
@@ -209,7 +214,12 @@ function Timecards() {
   return (
     <div>
       <span>End Date: </span>
-      <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+      <DatePicker
+        selected={endDate}
+        onChange={(date) => {
+          setEndDate(date);
+        }}
+      />
       <span>Page: </span>
       <input
         type="number"
@@ -226,6 +236,7 @@ function Timecards() {
         <span style={{ paddingRight: '3em' }}>
           Admin Approvals (this page): {timecards.filter(isSuperAdmin).length}
         </span>
+        {updated ? <span>Last Updated: {updated.toLocaleString()}</span> : null}
       </section>
       {table}
     </div>
