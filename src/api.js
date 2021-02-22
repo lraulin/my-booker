@@ -25,7 +25,7 @@ export const fetchTimecards = async ({
   limit = 100,
 }) => {
   const endDate = formatDate(end);
-  const startDate = formatDate(dateOffset(-14));
+  const startDate = formatDate(dateOffset(-14, end));
   const skip = page * limit;
   try {
     console.log('Fetching from api...');
@@ -60,8 +60,8 @@ export const fetchTimecards = async ({
   }
 };
 
-const dateOffset = (days) =>
-  new Date(new Date().setDate(new Date().getDate() + days));
+const dateOffset = (days, baseDate = new Date()) =>
+  new Date(new Date().setDate(baseDate.getDate() + days));
 
 // YYYY-MM-DD
 const formatDate = (date) => date.toISOString().slice(0, 10);
