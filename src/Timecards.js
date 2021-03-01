@@ -110,7 +110,7 @@ function Timecards() {
       page: page - 1,
     }).then((res) => {
       const newUpdated = new Date();
-      if (res.data && res.data.length) {
+      if (res.data) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
         localStorage.setItem('total', JSON.stringify(res.total));
         localStorage.setItem('updated', newUpdated.toISOString());
@@ -211,6 +211,8 @@ function Timecards() {
     </Table>
   );
 
+  const lastPage = Math.ceil(total / 100);
+
   return (
     <div>
       <span>End Date: </span>
@@ -220,13 +222,16 @@ function Timecards() {
           setEndDate(date);
         }}
       />
+      <span style={{ marginRight: '1em' }}></span>
       <span>Page: </span>
       <input
         type="number"
         value={page}
         min="1"
+        max={lastPage || 1}
         onChange={(e) => setPage(Number.parseInt(e.target.value))}
-      />
+      ></input>
+      <span style={{ marginRight: '1em' }}>of {lastPage}</span>
       <Button onClick={refresh}>Fetch Timecards</Button>
       <Button variant="secondary" onClick={toggleSuperOnly}>
         Show {superOnly ? 'All Timecards' : 'Only Super Admin'}
