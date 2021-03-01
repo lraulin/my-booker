@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/my-booker/static/css/main.83b09476.chunk.css",
-    "main.js": "/my-booker/static/js/main.35a67118.chunk.js",
-    "main.js.map": "/my-booker/static/js/main.35a67118.chunk.js.map",
+    "main.js": "/my-booker/static/js/main.01a31bb1.chunk.js",
+    "main.js.map": "/my-booker/static/js/main.01a31bb1.chunk.js.map",
     "runtime-main.js": "/my-booker/static/js/runtime-main.0b1fbdac.js",
     "runtime-main.js.map": "/my-booker/static/js/runtime-main.0b1fbdac.js.map",
     "static/css/2.b49a6039.chunk.css": "/my-booker/static/css/2.b49a6039.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.b49a6039.chunk.css",
     "static/js/2.fd605d1f.chunk.js",
     "static/css/main.83b09476.chunk.css",
-    "static/js/main.35a67118.chunk.js"
+    "static/js/main.01a31bb1.chunk.js"
   ]
 }
