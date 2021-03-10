@@ -116,7 +116,7 @@ function Timecards() {
       facilityId: selectedFacility && selectedFacility.id,
     }).then((res) => {
       const newUpdated = new Date();
-      if (res.data && res.data.length) {
+      if (res.data && res.hasOwnProperty('total')) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
         localStorage.setItem('total', JSON.stringify(res.total));
         localStorage.setItem('updated', newUpdated.toISOString());

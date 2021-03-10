@@ -30,6 +30,7 @@ export const fetchTimecards = async ({
   const skip = page * limit;
   try {
     console.log('Fetching from api...');
+    console.log(facilityId);
     const result = await fetch(
       `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY${
         facilityId ? '&facilityId=' + facilityId : ''
