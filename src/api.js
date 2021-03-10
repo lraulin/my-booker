@@ -21,6 +21,7 @@ export const fetchOneTimecard = async (id, token) => {
 export const fetchTimecards = async ({
   authorization,
   end,
+  facilityId,
   page = 0,
   limit = 100,
 }) => {
@@ -30,7 +31,9 @@ export const fetchTimecards = async ({
   try {
     console.log('Fetching from api...');
     const result = await fetch(
-      `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY&status[]=submitted&status[]=confirmed&status[]=preapproved&workDate[$gte]=${startDate}&workDate[$lte]=${endDate}&platformId=1&$limit=${limit}&$skip=${skip}&$sort[createdAt]=-1`,
+      `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY${
+        facilityId ? '&facilityId=' + facilityId : ''
+      }&status[]=submitted&status[]=confirmed&status[]=preapproved&workDate[$gte]=${startDate}&workDate[$lte]=${endDate}&platformId=1&$limit=${limit}&$skip=${skip}&$sort[createdAt]=-1`,
       {
         headers: {
           accept: 'application/json, text/plain, */*',
