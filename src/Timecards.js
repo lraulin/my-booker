@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { fetchTimecards } from './api';
+import { fetchFacilities, fetchTimecards } from './api';
 import { useAuth } from './use-auth';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import DatePicker from 'react-datepicker';
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -99,6 +101,9 @@ function Timecards() {
   const [isLoading, setIsLoading] = useState(false);
   const [endDate, setEndDate] = useState(new Date());
   const [updated, setUpdated] = useState(null);
+  const [selectedFacility, setSelectedFacility] = useState(null);
+  const [facilities, setFacilities] = useState([]);
+  const [facilitiesAreLoading, setFacilitiesAreLoading] = useState(false);
   const history = useHistory();
   const auth = useAuth();
 
@@ -108,9 +113,10 @@ function Timecards() {
       authorization: auth.token,
       end: endDate,
       page: page - 1,
+      facilityId: selectedFacility && selectedFacility.id,
     }).then((res) => {
       const newUpdated = new Date();
-      if (res.data) {
+      if (res.data && res.data.length) {
         localStorage.setItem('timecards', JSON.stringify(res.data));
         localStorage.setItem('total', JSON.stringify(res.total));
         localStorage.setItem('updated', newUpdated.toISOString());
@@ -236,10 +242,30 @@ function Timecards() {
       <Button variant="secondary" onClick={toggleSuperOnly}>
         Show {superOnly ? 'All Timecards' : 'Only Super Admin'}
       </Button>
+      Facility:
+      <AsyncTypeahead
+        id="facilityTypeahead"
+        isLoading={facilitiesAreLoading}
+        labelKey="name"
+        onChange={(selected) => {
+          console.log('Facility selected');
+          console.log(selected[0]);
+          setSelectedFacility(selected[0]);
+        }}
+        onSearch={(query) => {
+          setFacilitiesAreLoading(true);
+          fetchFacilities(query, auth.token).then((data) => {
+            setFacilities(data);
+            setFacilitiesAreLoading(false);
+          });
+        }}
+        options={facilities}
+      />
       <section id="timecardStats">
         <span style={{ paddingRight: '3em' }}>Total Timecards: {total}</span>
         <span style={{ paddingRight: '3em' }}>
-          Admin Approvals (this page): {timecards.filter(isSuperAdmin).length}
+          Admin Approvals (this page):{' '}
+          {timecards ? timecards.filter(isSuperAdmin).length : 0}
         </span>
         {updated ? <span>Last Updated: {updated.toLocaleString()}</span> : null}
       </section>

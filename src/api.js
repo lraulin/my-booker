@@ -31,7 +31,6 @@ export const fetchTimecards = async ({
     console.log('Fetching from api...');
     const result = await fetch(
       `https://app.snapnurse.com/api/v1/admin/timecards?type=HOURLY&status[]=submitted&status[]=confirmed&status[]=preapproved&workDate[$gte]=${startDate}&workDate[$lte]=${endDate}&platformId=1&$limit=${limit}&$skip=${skip}&$sort[createdAt]=-1`,
-
       {
         headers: {
           accept: 'application/json, text/plain, */*',
@@ -44,6 +43,39 @@ export const fetchTimecards = async ({
           'sec-gpc': '1',
         },
         referrer: `https://app.snapnurse.com/admin/timecards?page=1&startDate=01/10/2021&endDate=01/22/2021&dateRangeType=workDate&type=HOURLY`,
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: null,
+        method: 'GET',
+        mode: 'cors',
+        // credentials: 'include',
+      },
+    );
+    const resbody = await result.json();
+    console.log('Api response:');
+    console.log(resbody);
+    return resbody;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const fetchFacilities = async (query, authorization) => {
+  try {
+    const result = await fetch(
+      `https://app.snapnurse.com/api/v1/facilities/autocomplete?q=${query}&enableAll=no`,
+      {
+        headers: {
+          accept: 'application/json, text/plain, */*',
+          'accept-language': 'en-US,en;q=0.9',
+          authorization,
+          'if-none-match': 'W/"577-j9ph8lbWP/pRd10MYiRA9tkI5NY"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+          'sec-gpc': '1',
+        },
+        referrer:
+          'https://app.snapnurse.com/admin/timecards?startDate=02/24/2021&endDate=03/10/2021&dateRangeType=workDate&type=HOURLY&page=1',
         referrerPolicy: 'strict-origin-when-cross-origin',
         body: null,
         method: 'GET',
