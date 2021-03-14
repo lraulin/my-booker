@@ -154,11 +154,10 @@ function Timecards() {
         <td>{getUserName(tc)}</td>
         <td>{details(tc)}</td>
         <td>{payRates(tc)}</td>
-        <td>{tc.agency}</td>
+        <td>{tc.facility.name}</td>
         <td>{tc.type}</td>
         <td>{tc.status}</td>
         <td>{tc.timecardPhotoUrls ? tc.timecardPhotoUrls.length : ''}</td>
-        <td>{stipends(tc)}</td>
         <td>${getTotalAmount(tc)}</td>
         <td>
           <Button onClick={() => history.push('/timecards/view?id=' + tc.id)}>
@@ -197,11 +196,10 @@ function Timecards() {
             'Worker',
             'Details',
             'Pay Rates',
-            'Agency',
+            'Facility',
             'Type',
             'Status',
-            'Image',
-            'Stipend',
+            'Images',
             'Total',
             'Inspect',
           ].map((header) => (
