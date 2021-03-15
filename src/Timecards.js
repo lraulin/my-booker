@@ -17,20 +17,12 @@ const getUserName = (tc) =>
 const float = (str) => Number.parseFloat(str) || 0;
 
 const getTotalAmount = (tc) =>
-  float(
-    (
-      float(tc.amount) +
-      // float(tc.overtimeAmount) +
-      // float(tc.doubletimeAmount) +
-      float(tc.stipendPaymentAmount)
-    ).toFixed(2),
-  );
+  float((float(tc.amount) + float(tc.stipendPaymentAmount)).toFixed(2));
 
 // Filter predicate
 const isSuperAdmin = (timecard) => getTotalAmount(timecard) >= 2000;
 
 const details = ({
-  workDate,
   startTime,
   endTime,
   lunchInMinutes,
@@ -78,16 +70,6 @@ const payRates = ({ timecardPayRate }) => {
     doubletimePayRate,
   } = timecardPayRate;
   return `${description}\n${payRate} / ${doubletimePayRate} / ${overtimePayRate}`;
-};
-
-const stipends = ({
-  stipendPaymentAmount,
-  stipendRuleAmount,
-  stipendRuleDays,
-}) => {
-  if (!stipendRuleAmount) return '';
-  return `$${stipendPaymentAmount}
-  $${stipendRuleAmount} / ${stipendRuleDays}`;
 };
 
 /**
