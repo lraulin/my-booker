@@ -83,7 +83,7 @@ function Timecards() {
   const [isLoading, setIsLoading] = useState(false);
   const [endDate, setEndDate] = useState(new Date());
   const [updated, setUpdated] = useState(null);
-  const [selectedFacility, setSelectedFacility] = useState(null);
+  const [selectedFacility, setSelectedFacility] = useState([]);
   const [facilities, setFacilities] = useState([]);
   const [facilitiesAreLoading, setFacilitiesAreLoading] = useState(false);
   const history = useHistory();
