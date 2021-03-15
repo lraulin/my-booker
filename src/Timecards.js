@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Container, Row, Spinner, Table } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { fetchFacilities, fetchTimecards } from './api';
 import { useAuth } from './use-auth';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import DatePicker from 'react-datepicker';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead, ClearButton } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -95,7 +95,7 @@ function Timecards() {
       authorization: auth.token,
       end: endDate,
       page: page - 1,
-      facilityId: selectedFacility && selectedFacility.id,
+      facilityId: selectedFacility.length ? selectedFacility[0].id : null,
     }).then((res) => {
       const newUpdated = new Date();
       if (res.data && res.hasOwnProperty('total')) {
@@ -136,7 +136,11 @@ function Timecards() {
         <td>{getUserName(tc)}</td>
         <td>{details(tc)}</td>
         <td>{payRates(tc)}</td>
-        <td>{tc.facility.name}</td>
+        <td>
+          <a href="#" onClick={(e) => handleClickFacility(e, tc.facility)}>
+            {tc.facility.name}
+          </a>
+        </td>
         <td>{tc.type}</td>
         <td>{tc.status}</td>
         <td>{tc.timecardPhotoUrls ? tc.timecardPhotoUrls.length : ''}</td>
@@ -199,48 +203,63 @@ function Timecards() {
 
   const lastPage = Math.ceil(total / 100);
 
+  const handleClickFacility = (e, facility) => {
+    e.preventDefault();
+    setSelectedFacility([facility]);
+  };
+
   return (
-    <div>
-      <span>End Date: </span>
-      <DatePicker
-        selected={endDate}
-        onChange={(date) => {
-          setEndDate(date);
-        }}
-      />
-      <span style={{ marginRight: '1em' }}></span>
-      <span>Page: </span>
-      <input
-        type="number"
-        value={page}
-        min="1"
-        max={lastPage || 1}
-        onChange={(e) => setPage(Number.parseInt(e.target.value))}
-      ></input>
-      <span style={{ marginRight: '1em' }}>of {lastPage}</span>
-      <Button onClick={refresh}>Fetch Timecards</Button>
-      <Button variant="secondary" onClick={toggleSuperOnly}>
-        Show {superOnly ? 'All Timecards' : 'Only Super Admin'}
-      </Button>
-      Facility:
-      <AsyncTypeahead
-        id="facilityTypeahead"
-        isLoading={facilitiesAreLoading}
-        labelKey="name"
-        onChange={(selected) => {
-          console.log('Facility selected');
-          console.log(selected[0]);
-          setSelectedFacility(selected[0]);
-        }}
-        onSearch={(query) => {
-          setFacilitiesAreLoading(true);
-          fetchFacilities(query, auth.token).then((data) => {
-            setFacilities(data);
-            setFacilitiesAreLoading(false);
-          });
-        }}
-        options={facilities}
-      />
+    <Container fluid>
+      <Row>
+        <span>End Date: </span>
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => {
+            setEndDate(date);
+          }}
+        />
+        <span style={{ marginRight: '1em' }}></span>
+        <span>Page: </span>
+        <input
+          type="number"
+          value={page}
+          min="1"
+          max={lastPage || 1}
+          onChange={(e) => setPage(Number.parseInt(e.target.value))}
+        ></input>
+        <span style={{ marginRight: '1em' }}>of {lastPage}</span>
+        <p>Facility: </p>
+        <AsyncTypeahead
+          id="facilityTypeahead"
+          isLoading={facilitiesAreLoading}
+          labelKey="name"
+          selected={selectedFacility}
+          onChange={(selected) => {
+            console.log('Facility selected');
+            console.log(selected[0]);
+            setSelectedFacility(selected);
+          }}
+          onSearch={(query) => {
+            setFacilitiesAreLoading(true);
+            fetchFacilities(query, auth.token).then((data) => {
+              setFacilities(data);
+              setFacilitiesAreLoading(false);
+            });
+          }}
+          options={facilities}
+          style={{ width: '38em' }}
+        >
+          {({ onClear, selected }) => (
+            <div className="rbt-aux">
+              {!!selected.length && <ClearButton onClick={onClear} />}
+            </div>
+          )}
+        </AsyncTypeahead>
+        <Button onClick={refresh}>Fetch Timecards</Button>
+        <Button variant="secondary" onClick={toggleSuperOnly}>
+          Show {superOnly ? 'All Timecards' : 'Only Super Admin'}
+        </Button>
+      </Row>
       <section id="timecardStats">
         <span style={{ paddingRight: '3em' }}>Total Timecards: {total}</span>
         <span style={{ paddingRight: '3em' }}>
@@ -250,7 +269,7 @@ function Timecards() {
         {updated ? <span>Last Updated: {updated.toLocaleString()}</span> : null}
       </section>
       {table}
-    </div>
+    </Container>
   );
 }
 
