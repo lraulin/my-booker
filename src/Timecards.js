@@ -108,7 +108,7 @@ function Timecards() {
       } else if (res.name === 'Forbidden') {
         console.log('Token expired. Signing out...');
         auth.signout();
-        history.push('/');
+        history.push('/login');
       } else {
         console.log('Problem fetching timecards...');
         console.log(res);
