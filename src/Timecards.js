@@ -206,6 +206,7 @@ function Timecards() {
   const handleClickFacility = (e, facility) => {
     e.preventDefault();
     setSelectedFacility([facility]);
+    setPage(1);
   };
 
   return (
