@@ -26,7 +26,7 @@ export const fetchTimecards = async ({
   limit = 100,
 }) => {
   const endDate = formatDate(end);
-  const startDate = formatDate(dateOffset(-14, end));
+  const startDate = formatDate(dateOffset(-30, end));
   const skip = page * limit;
   try {
     console.log('Fetching from api...');
