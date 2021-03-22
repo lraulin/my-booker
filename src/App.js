@@ -1,20 +1,20 @@
-import React from 'react';
-import { HashRouter as Router, Switch, Route, NavLink } from 'react-router-dom';
-import './App.css';
-import Timecards from './Timecards';
-import ViewTimecard from './ViewTimecard';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import Login from './Login';
-import { ProvideAuth } from './use-auth';
-import PrivateRoute from './PrivateRoute';
-import AuthButton from './AuthButton';
-import HolidayPay from 'HolidayPay';
+import React from "react";
+import { HashRouter as Router, Switch, Route, NavLink } from "react-router-dom";
+import "./App.css";
+import Timecards from "./Timecards";
+import ViewTimecard from "./ViewTimecard";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import Login from "./Login";
+import { ProvideAuth } from "./use-auth";
+import PrivateRoute from "./PrivateRoute";
+import AuthButton from "./AuthButton";
+import HolidayPay from "HolidayPay";
 
 const App = () => {
   return (
     <ProvideAuth>
-      <Router basename="/my-booker">
+      <Router>
         <Navbar bg="dark" variant="dark">
           <Navbar.Brand href="">Navbar</Navbar.Brand>
           <Nav className="mr-auto">
