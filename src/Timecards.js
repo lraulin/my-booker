@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Container, Row, Spinner, Table } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
-import { fetchFacilities, fetchTimecards } from './api';
-import { useAuth } from './use-auth';
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import DatePicker from 'react-datepicker';
-import { AsyncTypeahead, ClearButton } from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useEffect, useState } from "react";
+import { Button, Container, Row, Spinner, Table } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { fetchFacilities, fetchTimecards } from "./api";
+import { useAuth } from "./use-auth";
+import Loader from "react-loader-spinner";
+import DatePicker from "react-datepicker";
+import { AsyncTypeahead, ClearButton } from "react-bootstrap-typeahead";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 const getUserName = (tc) =>
-  tc.user && tc.user.firstName + ' ' + tc.user.lastName;
+  tc.user && tc.user.firstName + " " + tc.user.lastName;
 
 const float = (str) => Number.parseFloat(str) || 0;
 
@@ -62,7 +61,7 @@ const details = ({
 );
 
 const payRates = ({ timecardPayRate }) => {
-  if (!timecardPayRate) return '';
+  if (!timecardPayRate) return "";
   const {
     description,
     payRate,
@@ -89,6 +88,12 @@ function Timecards() {
   const history = useHistory();
   const auth = useAuth();
 
+  const tcsPerFacility = timecards.reduce((a, c) => {
+    a[c.facility.name] = ++a[c.facility.name] || 1;
+    return a;
+  }, {});
+  console.table(tcsPerFacility);
+
   const refresh = () => {
     setIsLoading(true);
     fetchTimecards({
@@ -98,19 +103,19 @@ function Timecards() {
       facilityId: selectedFacility.length ? selectedFacility[0].id : null,
     }).then((res) => {
       const newUpdated = new Date();
-      if (res.data && res.hasOwnProperty('total')) {
-        localStorage.setItem('timecards', JSON.stringify(res.data));
-        localStorage.setItem('total', JSON.stringify(res.total));
-        localStorage.setItem('updated', newUpdated.toISOString());
+      if (res.data && res.hasOwnProperty("total")) {
+        localStorage.setItem("timecards", JSON.stringify(res.data));
+        localStorage.setItem("total", JSON.stringify(res.total));
+        localStorage.setItem("updated", newUpdated.toISOString());
         setTimecards(res.data);
         setTotal(res.total);
         setUpdated(newUpdated);
-      } else if (res.name === 'Forbidden') {
-        console.log('Token expired. Signing out...');
+      } else if (res.code === 401) {
+        console.log("Not authenticated. Signing out...");
         auth.signout();
-        history.push('/login');
+        history.push("/login");
       } else {
-        console.log('Problem fetching timecards...');
+        console.log("Problem fetching timecards...");
         console.log(res);
       }
       setIsLoading(false);
@@ -120,11 +125,11 @@ function Timecards() {
   const toggleSuperOnly = () => setSuperOnly(!superOnly);
 
   useEffect(() => {
-    const tcs = JSON.parse(localStorage.getItem('timecards'));
+    const tcs = JSON.parse(localStorage.getItem("timecards"));
     if (tcs && tcs.length) {
       setTimecards(tcs);
-      setTotal(Number.parseInt(localStorage.getItem('total')));
-      setUpdated(new Date(localStorage.getItem('updated')));
+      setTotal(Number.parseInt(localStorage.getItem("total")));
+      setUpdated(new Date(localStorage.getItem("updated")));
     }
   }, []);
 
@@ -143,10 +148,10 @@ function Timecards() {
         </td>
         <td>{tc.type}</td>
         <td>{tc.status}</td>
-        <td>{tc.timecardPhotoUrls ? tc.timecardPhotoUrls.length : ''}</td>
+        <td>{tc.timecardPhotoUrls ? tc.timecardPhotoUrls.length : ""}</td>
         <td>${getTotalAmount(tc)}</td>
         <td>
-          <Button onClick={() => history.push('/timecards/view?id=' + tc.id)}>
+          <Button onClick={() => history.push("/timecards/view?id=" + tc.id)}>
             Actions
           </Button>
           <a
@@ -156,7 +161,7 @@ function Timecards() {
             onClick={() =>
               setTimecards(timecards.filter((t) => t.userId !== tc.userId))
             }
-            style={tc.visited ? { color: 'red' } : null}
+            style={tc.visited ? { color: "red" } : null}
           >
             Open in Booker
           </a>
@@ -177,17 +182,17 @@ function Timecards() {
       <thead>
         <tr>
           {[
-            'Work Date',
-            'Created At',
-            'Worker',
-            'Details',
-            'Pay Rates',
-            'Facility',
-            'Type',
-            'Status',
-            'Images',
-            'Total',
-            'Inspect',
+            "Work Date",
+            "Created At",
+            "Worker",
+            "Details",
+            "Pay Rates",
+            "Facility",
+            "Type",
+            "Status",
+            "Images",
+            "Total",
+            "Inspect",
           ].map((header) => (
             <th>{header}</th>
           ))}
@@ -219,7 +224,7 @@ function Timecards() {
             setEndDate(date);
           }}
         />
-        <span style={{ marginRight: '1em' }}></span>
+        <span style={{ marginRight: "1em" }}></span>
         <span>Page: </span>
         <input
           type="number"
@@ -228,7 +233,7 @@ function Timecards() {
           max={lastPage || 1}
           onChange={(e) => setPage(Number.parseInt(e.target.value))}
         ></input>
-        <span style={{ marginRight: '1em' }}>of {lastPage}</span>
+        <span style={{ marginRight: "1em" }}>of {lastPage}</span>
         <p>Facility: </p>
         <AsyncTypeahead
           id="facilityTypeahead"
@@ -236,7 +241,7 @@ function Timecards() {
           labelKey="name"
           selected={selectedFacility}
           onChange={(selected) => {
-            console.log('Facility selected');
+            console.log("Facility selected");
             console.log(selected[0]);
             setSelectedFacility(selected);
           }}
@@ -248,7 +253,7 @@ function Timecards() {
             });
           }}
           options={facilities}
-          style={{ width: '38em' }}
+          style={{ width: "38em" }}
         >
           {({ onClear, selected }) => (
             <div className="rbt-aux">
@@ -258,13 +263,13 @@ function Timecards() {
         </AsyncTypeahead>
         <Button onClick={refresh}>Fetch Timecards</Button>
         <Button variant="secondary" onClick={toggleSuperOnly}>
-          Show {superOnly ? 'All Timecards' : 'Only Super Admin'}
+          Show {superOnly ? "All Timecards" : "Only Super Admin"}
         </Button>
       </Row>
       <section id="timecardStats">
-        <span style={{ paddingRight: '3em' }}>Total Timecards: {total}</span>
-        <span style={{ paddingRight: '3em' }}>
-          Admin Approvals (this page):{' '}
+        <span style={{ paddingRight: "3em" }}>Total Timecards: {total}</span>
+        <span style={{ paddingRight: "3em" }}>
+          Admin Approvals (this page):{" "}
           {timecards ? timecards.filter(isSuperAdmin).length : 0}
         </span>
         {updated ? <span>Last Updated: {updated.toLocaleString()}</span> : null}
