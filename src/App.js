@@ -16,7 +16,6 @@ const App = () => {
     <ProvideAuth>
       <Router basename="/my-booker">
         <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="">Navbar</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Link as={NavLink} to="/timecards">
               Timecards
@@ -47,6 +46,14 @@ const App = () => {
               rel="noreferrer"
             >
               Gmail
+            </a>
+            <a
+              className="nav-link"
+              href="https://docs.google.com/spreadsheets/d/1ODyxzF2l64H0BIBA5QHkhW905t60zNUCxidY7TaIzz0/edit?ts=60286033#gid=1398604614"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Schedule
             </a>
           </Nav>
           <AuthButton />
