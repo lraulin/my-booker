@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/my-booker/static/css/main.83b09476.chunk.css",
-    "main.js": "/my-booker/static/js/main.d63a08ce.chunk.js",
-    "main.js.map": "/my-booker/static/js/main.d63a08ce.chunk.js.map",
+    "main.css": "/my-booker/static/css/main.8ee3b8a4.chunk.css",
+    "main.js": "/my-booker/static/js/main.80eed55d.chunk.js",
+    "main.js.map": "/my-booker/static/js/main.80eed55d.chunk.js.map",
     "runtime-main.js": "/my-booker/static/js/runtime-main.0b815aa8.js",
     "runtime-main.js.map": "/my-booker/static/js/runtime-main.0b815aa8.js.map",
     "static/css/2.8df67284.chunk.css": "/my-booker/static/css/2.8df67284.chunk.css",
@@ -12,14 +12,14 @@
     "static/js/3.bf526936.chunk.js.map": "/my-booker/static/js/3.bf526936.chunk.js.map",
     "index.html": "/my-booker/index.html",
     "static/css/2.8df67284.chunk.css.map": "/my-booker/static/css/2.8df67284.chunk.css.map",
-    "static/css/main.83b09476.chunk.css.map": "/my-booker/static/css/main.83b09476.chunk.css.map",
+    "static/css/main.8ee3b8a4.chunk.css.map": "/my-booker/static/css/main.8ee3b8a4.chunk.css.map",
     "static/js/2.d4e45eac.chunk.js.LICENSE.txt": "/my-booker/static/js/2.d4e45eac.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.0b815aa8.js",
     "static/css/2.8df67284.chunk.css",
     "static/js/2.d4e45eac.chunk.js",
-    "static/css/main.83b09476.chunk.css",
-    "static/js/main.d63a08ce.chunk.js"
+    "static/css/main.8ee3b8a4.chunk.css",
+    "static/js/main.80eed55d.chunk.js"
   ]
 }
