@@ -110,7 +110,7 @@ function Timecards() {
         setTimecards(res.data);
         setTotal(res.total);
         setUpdated(newUpdated);
-      } else if (res.code === 401) {
+      } else if (res.code in [401, 402, 403]) {
         console.log("Not authenticated. Signing out...");
         auth.signout();
         history.push("/login");
